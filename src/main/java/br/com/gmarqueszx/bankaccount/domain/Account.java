@@ -1,5 +1,6 @@
 package br.com.gmarqueszx.bankaccount.domain;
 
+import br.com.gmarqueszx.bankaccount.services.ITransactions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,23 +8,25 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public abstract class Account {
+public abstract class Account implements ITransactions {
+    private Customer customer;
     private String accountNumber;
     private String agencyNumber;
-    private double balance;
+    private double balance = 0.0;
 
-    public double deposit(double amount) {
-        return balance + amount;
+    public Account(Customer customer, String accountNumber, String agencyNumber) {
+        this.customer = customer;
+        this.accountNumber = accountNumber;
+        this.agencyNumber = agencyNumber;
     }
 
-    public double withdraw(double amount) {
-        if (balance - amount < 0) {
-            throw new RuntimeException("Insufficient balance");
-        } else {
-            return balance -= amount;
-        }
+    @Override
+    public String toString() {
+        return "Account{" +
+                "customer=" + customer +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", agencyNumber='" + agencyNumber + '\'' +
+                ", balance=" + balance +
+                '}';
     }
-
 }

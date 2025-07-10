@@ -1,29 +1,38 @@
 package br.com.gmarqueszx.bankaccount.domain;
 
-import lombok.AllArgsConstructor;
+import br.com.gmarqueszx.bankaccount.exception.InsufficientBalance;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class CheckingAccount extends Account {
-    private double annualCheckLimit;
+    private double overdraftLimit;
 
-    public CheckingAccount(String accountNumber, String agencyNumber, double balance, double annualCheckLimit) {
-        super(accountNumber, agencyNumber, balance);
-        this.annualCheckLimit = annualCheckLimit;
+    public CheckingAccount(Customer customer, String accountNumber, String agencyNumber, double overdraftLimit) {
+        super(customer, accountNumber, agencyNumber);
+        this.overdraftLimit = overdraftLimit;
     }
 
 
     @Override
-    public double withdraw(double amount) {
-        double balanceAddedCredit = getBalance() + annualCheckLimit;
+    public void deposit(double amount) {
+        setBalance(getBalance() + amount);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        double balanceAddedCredit = getBalance() + overdraftLimit;
         if (balanceAddedCredit - amount < 0) {
-            throw new RuntimeException("Insufficient balance");
+            throw new InsufficientBalance("Insufficient balance to carry out the transaction");
         } else {
              setBalance(getBalance() - amount);
         }
-        return getBalance();
     }
+
+    @Override
+    public void transfer(double amount) {
+
+    }
+
 }
